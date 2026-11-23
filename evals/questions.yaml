@@ -1,0 +1,180 @@
+# Evaluation questions (stage 0).
+#
+# Schema per question:
+#   id                    unique id: <topic>-<number>
+#   question              written in the words of a worker, not of the law
+#   expected_answer       taken from the official text, never from memory or another AI
+#   expected_articles     list of groups. Retrieval must find at least one article of
+#                         EACH group. Several articles inside one group are
+#                         alternatives (either one is enough).
+#   category              everyday | article_number | multi_article | trap
+#                         multi_article = two or more groups are needed.
+#   group                 development | held_out. Left as null until the 50 questions
+#                         exist; then 15 are drawn at random, keeping the plan's
+#                         proportions (10 everyday, 2 article_number, 1 multi_article,
+#                         2 trap).
+#   abstention_criterion  trap questions only: what the system must and must not say.
+#   verified_by_hand      true only after each expected article was checked by hand
+#                         against the official text (see docs/norms.md).
+#   notes                 optional.
+#
+# Article ids: "<norm-id>:art-<number>". Chunks are whole articles, so a numeral
+# such as 3.4 points to its article (art-3). Norm ids:
+#   ley-27735, ds-005-2002-tr, ley-30334, ds-001-97-tr, ds-004-97-tr, ley-32322
+
+questions:
+  - id: grat-001
+    question: >
+      Trabajo en una empresa privada. ¿Me tienen que pagar algún dinero extra por
+      Fiestas Patrias y Navidad, aparte de mi sueldo?
+    expected_answer: >
+      Sí. Los trabajadores del régimen laboral de la actividad privada tienen derecho
+      a dos gratificaciones al año, una por Fiestas Patrias y otra por Navidad,
+      cualquiera sea la modalidad del contrato y el tiempo de servicios.
+    expected_articles:
+      - ["ley-27735:art-1", "ds-005-2002-tr:art-1"]
+    category: everyday
+    group: null
+    verified_by_hand: false
+
+  - id: grat-002
+    question: >
+      Estamos a mediados de julio y todavía no me han pagado el dinero extra por
+      Fiestas Patrias. ¿Hasta cuándo tiene mi empresa para pagármelo?
+    expected_answer: >
+      Hasta el fin de la primera quincena de julio (el 15). Ese plazo no se puede
+      cambiar por acuerdo entre las partes.
+    expected_articles:
+      - ["ley-27735:art-5", "ds-005-2002-tr:art-4"]
+    category: everyday
+    group: null
+    verified_by_hand: false
+    notes: The law gives the deadline; the regulation adds that it is "indisponible".
+
+  - id: grat-003
+    question: >
+      Gano 2.000 soles al mes y llevo más de un año trabajando en la misma empresa.
+      ¿Cuánto dinero extra deberían pagarme en julio?
+    expected_answer: >
+      Si trabajó todo el semestre enero-junio y 2,000 soles es toda su remuneración
+      computable, la gratificación de julio es una remuneración íntegra: 2,000 soles.
+      Además recibe una bonificación extraordinaria igual al monto que el empleador
+      aportaría a Essalud por esa gratificación.
+    expected_articles:
+      - ["ley-27735:art-2", "ds-005-2002-tr:art-3"]
+      - ["ley-30334:art-3"]
+    category: multi_article
+    group: null
+    verified_by_hand: false
+    notes: >
+      What matters is the full January-June semester, not "more than a year".
+      The Essalud rate is NOT in the corpus: the answer must not state a percentage.
+      Amount calculation belongs to the stage 5 tool, not to the model.
+
+  - id: grat-004
+    question: >
+      Empecé a trabajar el 1 de mayo y mis compañeros dicen que en julio van a recibir
+      un sueldo extra. ¿A mí también me corresponde algo aunque lleve poco tiempo?
+    expected_answer: >
+      Sí, una gratificación proporcional. Se calcula por cada mes calendario completo
+      trabajado en el semestre enero-junio: mayo y junio, es decir 2/6 de la
+      remuneración computable.
+    expected_articles:
+      - ["ley-27735:art-6", "ds-005-2002-tr:art-3"]
+    category: everyday
+    group: null
+    verified_by_hand: false
+    notes: >
+      Original wording said "en mayo"; changed to "el 1 de mayo" because the number
+      of full calendar months depends on the start date.
+
+  - id: grat-005
+    question: >
+      Mi empresa me ha descontado dinero de mi pago extra de Navidad por la AFP.
+      ¿Eso está bien o deberían pagarme el monto completo?
+    expected_answer: >
+      No está bien. Las gratificaciones de Fiestas Patrias y Navidad no están afectas
+      a aportaciones, contribuciones ni descuentos de ningún tipo, salvo los
+      descuentos establecidos por ley o autorizados por el trabajador.
+    expected_articles:
+      - ["ley-27735:art-8-A", "ley-30334:art-1"]
+    category: everyday
+    group: null
+    verified_by_hand: false
+    notes: Both articles have the same text; either one is a valid citation.
+
+  - id: grat-006
+    question: >
+      Un compañero me dijo que, además del sueldo extra de julio, la empresa tiene que
+      pagarnos un porcentaje adicional. ¿Es verdad?
+    expected_answer: >
+      Sí. El monto que el empleador aportaría a Essalud por las gratificaciones de
+      julio y diciembre se paga al trabajador como bonificación extraordinaria, de
+      carácter temporal, no remunerativo ni pensionable.
+    expected_articles:
+      - ["ley-30334:art-3"]
+    category: everyday
+    group: null
+    verified_by_hand: false
+    notes: The Essalud rate (the well-known "9%") is NOT in the corpus; do not state it.
+
+  - id: grat-007
+    question: >
+      Estoy pensando en renunciar en mayo. ¿Pierdo el dinero extra que me
+      correspondería en julio o la empresa tiene que pagarme una parte?
+    expected_answer: >
+      No lo pierde. Si trabajó al menos un mes completo en el semestre, recibe una
+      gratificación trunca, proporcional a los meses calendario completos trabajados
+      en el semestre. Se paga junto con los demás beneficios sociales dentro de las
+      48 horas siguientes al cese.
+    expected_articles:
+      - ["ley-27735:art-7"]
+      - ["ds-005-2002-tr:art-5"]
+    category: multi_article
+    group: null
+    verified_by_hand: false
+    notes: The law gives the right; the regulation gives how and when it is paid.
+
+  - id: grat-008
+    question: >
+      Mi sueldo es de 1.500 soles, pero algunos meses gano más porque hago horas
+      extras. ¿Para calcular el pago extra de diciembre toman en cuenta esas horas
+      extras?
+    expected_answer: >
+      Sí, si las recibió en al menos tres meses del semestre julio-diciembre. En ese
+      caso se suman los montos recibidos y el resultado se divide entre seis.
+    expected_articles:
+      - ["ley-27735:art-3", "ds-005-2002-tr:art-3"]
+    category: everyday
+    group: null
+    verified_by_hand: false
+
+  - id: grat-009
+    question: >
+      Estuve un mes de descanso médico porque me enfermé. ¿Eso significa que voy a
+      recibir menos dinero en mi pago extra de Navidad?
+    expected_answer: >
+      No. Los descansos o licencias de seguridad social que originan el pago de
+      subsidios, y las licencias con goce de remuneraciones, se consideran tiempo
+      efectivamente laborado, así que no se descuentan.
+    expected_articles:
+      - ["ds-005-2002-tr:art-2", "ley-27735:art-6"]
+    category: everyday
+    group: null
+    verified_by_hand: false
+
+  - id: grat-010
+    question: >
+      En mi empresa nos dijeron que este año no tienen suficiente dinero para
+      pagarnos el extra de diciembre. ¿Pueden hacer eso o están obligados a pagarnos?
+    expected_answer: >
+      Están obligados. La gratificación de Navidad se paga en la primera quincena de
+      diciembre y ese plazo no se puede cambiar por acuerdo entre las partes.
+    expected_articles:
+      - ["ds-005-2002-tr:art-4", "ley-27735:art-5"]
+    category: everyday
+    group: null
+    verified_by_hand: false
+    notes: >
+      Sanctions and how to file a complaint are NOT in the corpus. If the answer
+      mentions them, it must say there is no source for that part.
